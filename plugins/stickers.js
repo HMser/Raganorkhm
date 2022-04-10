@@ -7,7 +7,7 @@ const cwebp = require('cwebp-bin');
 const Config = require('../config');
 let w = require('../config');
 let v = w.SUPPORT3
-let i = require('raganork-bot');
+let {skbuffer,sticker} = require('raganork-bot');
 const Language = require('../language');
 const Lang = Language.getString('sticker');
 
@@ -16,7 +16,6 @@ let sk = Config.WORKTYPE == 'public' ? false : true
 Asena.addCommand({pattern: 'sticker$', fromMe: sk, desc: Lang.STICKER_DESC}, (async (message, match) => {    
 
         if (message.reply_message === false) return await message.client.sendMessage(message.jid,Lang.NEED_REPLY, MessageType.text);
-        var downloading = await message.client.sendMessage(message.jid,Lang.DOWNLOADING,MessageType.text);
         var location = await message.client.downloadAndSaveMediaMessage({
             key: {
                 remoteJid: message.reply_message.jid,
@@ -35,13 +34,12 @@ Asena.addCommand({pattern: 'sticker$', fromMe: sk, desc: Lang.STICKER_DESC}, (as
                         var s = w.SOURAVKL11.split('|');
                         var au = s[1];
                         var p = s[0];
-                        var res = await i.query.sticker('st.webp',au,p,w.take_key,v)
-                        await message.client.sendMessage(message.jid,await i.query.skbuffer(res), MessageType.sticker);
+                        var res = await sticker('st.webp',au,p,w.take_key,v)
+                        await message.client.sendMessage(message.jid,await skbuffer(res), MessageType.sticker);
                     }
                     else await message.sendMessage(fs.readFileSync('st.webp'), MessageType.sticker);
             });
-        return await message.client.deleteMessage(message.jid, {id: downloading.key.id, remoteJid: message.jid, fromMe: true})
-
+        return;
         }
 
         ffmpeg(location)
@@ -53,10 +51,10 @@ Asena.addCommand({pattern: 'sticker$', fromMe: sk, desc: Lang.STICKER_DESC}, (as
                     var s = w.SOURAVKL11.split('|');
                     var au = s[1];
                     var p = s[0];
-                    var res = await i.query.sticker('sticker.webp',au,p,w.take_key,v)
-                    await message.client.sendMessage(message.jid,await i.query.skbuffer(res), MessageType.sticker);
+                    var res = await sticker('sticker.webp',au,p,w.take_key,v)
+                    await message.client.sendMessage(message.jid,await skbuffer(res), MessageType.sticker);
                 }
                 else await message.sendMessage(fs.readFileSync('sticker.webp'), MessageType.sticker);
             });
-        return await message.client.deleteMessage(message.jid, {id: downloading.key.id, remoteJid: message.jid, fromMe: true})
+        return;
     }));
